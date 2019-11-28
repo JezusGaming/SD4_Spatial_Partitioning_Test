@@ -18,7 +18,7 @@ public class FindClosest : MonoBehaviour
     private Rect m_rect;
 
     private TestObject newObject;
-
+    float shortestDistance = Mathf.Infinity;
     public bool m_bKdTree = false;
     public bool m_bOctree = false;
 
@@ -44,14 +44,14 @@ public class FindClosest : MonoBehaviour
         for (int i = 0; i < m_nCountWhite; i++)
         {
             m_WhiteAgents.Add(Instantiate(WhiteAIPrefab).GetComponent<AI_Move>());
-            newObject = new TestObject(m_WhiteAgents[i].transform.position);
-            quadTree.Insert(newObject);
+            //newObject = new TestObject(m_WhiteAgents[i].transform.position);
+            //quadTree.Insert(newObject);
         }
         for (int i = 0; i < m_nCountBlack; i++)
         {
             m_BlackAgents.Add(Instantiate(BlackAIPrefab).GetComponent<AI_Move>());
-            newObject = new TestObject(m_BlackAgents[i].transform.position);
-            quadTree.Insert(newObject);
+            //newObject = new TestObject(m_BlackAgents[i].transform.position);
+            //quadTree.Insert(newObject);
         }
         
     }
@@ -72,55 +72,54 @@ public class FindClosest : MonoBehaviour
         }
         else if(m_bOctree)
         {
-            var shortestDistance = Mathf.Infinity;
+            
             GameObject whiteAgent;
-            GameObject BlackAgent;
+            //GameObject BlackAgent;
             foreach (var m_WhiteAgent in m_WhiteAgents)
             {
-                
-
+                newObject = new TestObject(m_WhiteAgent.transform.position);
+                quadTree.Insert(newObject);
+                shortestDistance = Mathf.Infinity;
                 m_rect = new Rect(newObject.GetPosition(), recSize);
 
                 m_QuadAgentsWhite = quadTree.RetrieveObjectsInArea(m_rect);
 
                 for (int i = 0; i < m_QuadAgentsWhite.Count; i++)
                 {
-                    for (int j = 0; j < m_BlackAgents.Count; j++)
+                    var distance = Vector3.Distance(m_WhiteAgent.transform.position, m_QuadAgentsWhite[i].GetPosition());
+                    if (distance < shortestDistance)
                     {
-                        var distance = Vector2.Distance(m_QuadAgentsWhite[i].GetPosition(), m_BlackAgents[j].transform.position);
-                        if (distance < shortestDistance)
-                        {
-                            shortestDistance = distance;
-                            whiteAgent = m_WhiteAgent.gameObject;
-                            BlackAgent = m_BlackAgents[j].gameObject;
-                            //quadTree.Clear();
-                            Debug.DrawLine(whiteAgent.transform.position, BlackAgent.transform.position, Color.red);
-                        }
+                        shortestDistance = distance;
+                        whiteAgent = m_WhiteAgent.gameObject;
+                        //BlackAgent = m_BlackAgents[j].gameObject;
+                        //quadTree.Clear();
+                        //Debug.DrawLine(m_WhiteAgent.transform.position, m_QuadAgentsWhite[i].GetPosition(), Color.red);
                     }
+                    //}
                 }
             }
-
-           
-
-            //for (int i = 0; i < 1000; i++)
-            //{
-            //    TestObject newObject = new TestObject(new Vector3(Random.Range(-900, 900), 0, Random.Range(-900, 900)));
-            //    quadTree.Insert(newObject);
-            //}
         }
         else if(!m_bKdTree && !m_bOctree)
         {
+            
             foreach (var m_WhiteAgent in m_WhiteAgents)
             {
                 var nearestDist = float.MaxValue;
                 AI_Move nearestObj = null;
+                shortestDistance = Mathf.Infinity;
 
                 foreach (var m_BlackAgent in m_BlackAgents)
                 {
                     nearestDist = Vector3.Distance(m_WhiteAgent.transform.position, m_BlackAgent.transform.position);
-                    nearestObj = m_BlackAgent;
+                    
+                    if (nearestDist < shortestDistance)
+                    {
+                        shortestDistance = nearestDist;
+                        nearestObj = m_BlackAgent;
+                    }
+
                 }
-                Debug.DrawLine(m_WhiteAgent.transform.position, nearestObj.transform.position, Color.red);
+                        Debug.DrawLine(m_WhiteAgent.transform.position, nearestObj.transform.position, Color.red);
             }
         }
     }

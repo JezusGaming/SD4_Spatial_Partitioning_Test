@@ -389,12 +389,12 @@ MonoBehaviour:
     type: 3}
   BlackAIPrefab: {fileID: 8661611830126376008, guid: 38cb31656b66361449ad84291ebf8b25,
     type: 3}
-  m_nCountBlack: 10
-  m_nCountWhite: 10
+  m_nCountBlack: 100
+  m_nCountWhite: 100
   recPos: {x: 0, y: 0}
   recSize: {x: 0.1, y: 0.1}
   m_bKdTree: 0
-  m_bOctree: 1
+  m_bOctree: 0
 --- !u!4 &966686549
 Transform:
   m_ObjectHideFlags: 0
