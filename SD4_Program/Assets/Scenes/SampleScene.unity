@@ -391,10 +391,8 @@ MonoBehaviour:
     type: 3}
   m_nCountBlack: 100
   m_nCountWhite: 100
-  recPos: {x: 0, y: 0}
-  recSize: {x: 0.1, y: 0.1}
   m_bKdTree: 0
-  m_bOctree: 0
+  m_bQuadTree: 1
 --- !u!4 &966686549
 Transform:
   m_ObjectHideFlags: 0

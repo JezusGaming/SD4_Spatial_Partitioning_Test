@@ -4,19 +4,25 @@ using UnityEngine;
 
 public class UI_Stats : MonoBehaviour
 {
+	// Used for deltatime.
 	float deltaTime = 0.0f;
 
+	//---------------------------------------------------------------------
+	// Update is called once per frame.
+	//---------------------------------------------------------------------
 	void Update()
 	{
+		// Sets deltatime to unscaled
 		deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
 	}
 
+	//---------------------------------------------------------------------
+	// Used to create GUI to display the frames
+	//---------------------------------------------------------------------
 	void OnGUI()
 	{
 		int w = Screen.width, h = Screen.height;
-
 		GUIStyle style = new GUIStyle();
-
 		Rect rect = new Rect(0, 0, w, h * 2 / 100);
 		style.alignment = TextAnchor.UpperLeft;
 		style.fontSize = h * 2 / 100;

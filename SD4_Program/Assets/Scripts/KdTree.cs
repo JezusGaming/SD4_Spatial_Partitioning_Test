@@ -18,10 +18,12 @@ public class KdTree<T> : IEnumerable<T>, IEnumerable where T : Component
     public float AverageSearchLength { protected set; get; }
     public float AverageSearchDeep { protected set; get; }
 
-    /// <summary>
-    /// create a tree
-    /// </summary>
-    /// <param name="just2D">just use x/z</param>
+    //---------------------------------------------------------------------
+    // Creates a tree
+    //
+	// Param:
+    //		just2D: just use x/z
+	//---------------------------------------------------------------------
     public KdTree(bool just2D = false)
     {
         _just2D = just2D;
@@ -39,31 +41,34 @@ public class KdTree<T> : IEnumerable<T>, IEnumerable where T : Component
             return current.component;
         }
     }
-
-    /// <summary>
-    /// add item
-    /// </summary>
-    /// <param name="item">item</param>
-    public void Add(T item)
+	//---------------------------------------------------------------------
+	// Adds a item to the tree
+	//
+	// Param:
+	//		item: is the item being added
+	//---------------------------------------------------------------------
+	public void Add(T item)
     {
         _add(new KdNode() { component = item });
     }
-
-    /// <summary>
-    /// batch add items
-    /// </summary>
-    /// <param name="items">items</param>
-    public void AddAll(List<T> items)
+	//---------------------------------------------------------------------
+	// Adds a bunch of items to the tree
+	//
+	// Param:
+	//		item: is the liat of itema being added
+	//---------------------------------------------------------------------
+	public void AddAll(List<T> items)
     {
         foreach (var item in items)
             Add(item);
     }
-
-    /// <summary>
-    /// find all objects that matches the given predicate
-    /// </summary>
-    /// <param name="match">lamda expression</param>
-    public KdTree<T> FindAll(Predicate<T> match)
+	//---------------------------------------------------------------------
+	// Find all objects that matches the given predicate
+	//
+	// Param:
+	//		match: lamda expression, used to find all items that match
+	//---------------------------------------------------------------------
+	public KdTree<T> FindAll(Predicate<T> match)
     {
         var list = new KdTree<T>(_just2D);
         foreach (var node in this)
@@ -72,11 +77,13 @@ public class KdTree<T> : IEnumerable<T>, IEnumerable where T : Component
         return list;
     }
 
-    /// <summary>
-    /// find first object that matches the given predicate
-    /// </summary>
-    /// <param name="match">lamda expression</param>
-    public T Find(Predicate<T> match)
+	//---------------------------------------------------------------------
+	// Find the first object that matches the given predicate
+	//
+	// Param:
+	//		match: lamda expression, used to find the first match
+	//---------------------------------------------------------------------
+	public T Find(Predicate<T> match)
     {
         var current = _root;
         while (current != null)
@@ -87,11 +94,13 @@ public class KdTree<T> : IEnumerable<T>, IEnumerable where T : Component
         }
         return null;
     }
-
-    /// <summary>
-    /// Remove at position i (position in list or loop)
-    /// </summary>
-    public void RemoveAt(int i)
+	//---------------------------------------------------------------------
+	// Remove at position i (position in list or loop)
+	//
+	// Param:
+	//		i: where the item should be removed from
+	//---------------------------------------------------------------------
+	public void RemoveAt(int i)
     {
         var list = new List<KdNode>(_getNodes());
         list.RemoveAt(i);
@@ -104,12 +113,13 @@ public class KdTree<T> : IEnumerable<T>, IEnumerable where T : Component
         foreach (var node in list)
             _add(node);
     }
-
-    /// <summary>
-    /// remove all objects that matches the given predicate
-    /// </summary>
-    /// <param name="match">lamda expression</param>
-    public void RemoveAll(Predicate<T> match)
+	//---------------------------------------------------------------------
+	// Remove all objects that matches the given predicate
+	//
+	// Param:
+	//		match: lamda expression, used to find the objects that match
+	//---------------------------------------------------------------------
+	public void RemoveAll(Predicate<T> match)
     {
         var list = new List<KdNode>(_getNodes());
         list.RemoveAll(n => match(n.component));
@@ -122,13 +132,16 @@ public class KdTree<T> : IEnumerable<T>, IEnumerable where T : Component
         foreach (var node in list)
             _add(node);
     }
-
-    /// <summary>
-    /// count all objects that matches the given predicate
-    /// </summary>
-    /// <param name="match">lamda expression</param>
-    /// <returns>matching object count</returns>
-    public int CountAll(Predicate<T> match)
+	//---------------------------------------------------------------------
+	// Count all objects that matches the given predicate
+	//
+	// Param:
+	//		match: lamda expression, used to find the objects that match
+	//
+	// Returns:
+	//		  Matching object count
+	//---------------------------------------------------------------------
+	public int CountAll(Predicate<T> match)
     {
         int count = 0;
         foreach (var node in this)
@@ -136,11 +149,10 @@ public class KdTree<T> : IEnumerable<T>, IEnumerable where T : Component
                 count++;
         return count;
     }
-
-    /// <summary>
-    /// clear tree
-    /// </summary>
-    public void Clear()
+	//---------------------------------------------------------------------
+	// Clears the tree
+	//---------------------------------------------------------------------
+	public void Clear()
     {
 
 
@@ -149,12 +161,13 @@ public class KdTree<T> : IEnumerable<T>, IEnumerable where T : Component
         _last = null;
         _count = 0;
     }
-
-    /// <summary>
-    /// Update positions (if objects moved)
-    /// </summary>
-    /// <param name="rate">Updates per second</param>
-    public void UpdatePositions(float rate)
+	//---------------------------------------------------------------------
+	// Update positions (if objects moved)
+	//
+	// Param:
+	//		rate: Updates per second
+	//---------------------------------------------------------------------
+	public void UpdatePositions(float rate)
     {
         if (Time.timeSinceLevelLoad - _LastUpdate < 1f / rate)
             return;
@@ -163,11 +176,10 @@ public class KdTree<T> : IEnumerable<T>, IEnumerable where T : Component
 
         UpdatePositions();
     }
-
-    /// <summary>
-    /// Update positions (if objects moved)
-    /// </summary>
-    public void UpdatePositions()
+	//---------------------------------------------------------------------
+	// Update positions (if objects moved)
+	//---------------------------------------------------------------------
+	public void UpdatePositions()
     {
         //save old traverse
         var current = _root;
@@ -190,12 +202,10 @@ public class KdTree<T> : IEnumerable<T>, IEnumerable where T : Component
             current = current._oldRef;
         }
     }
-
-    /// <summary>
-    /// Method to enable foreach-loops
-    /// </summary>
-    /// <returns>Enumberator</returns>
-    public IEnumerator<T> GetEnumerator()
+	//---------------------------------------------------------------------
+	// Method to enable foreach-loops
+	//---------------------------------------------------------------------
+	public IEnumerator<T> GetEnumerator()
     {
         var current = _root;
         while (current != null)
@@ -204,23 +214,20 @@ public class KdTree<T> : IEnumerable<T>, IEnumerable where T : Component
             current = current.next;
         }
     }
-
-    /// <summary>
-    /// Convert to list
-    /// </summary>
-    /// <returns>list</returns>
-    public List<T> ToList()
+	//---------------------------------------------------------------------
+	// Convert to list
+	//---------------------------------------------------------------------
+	public List<T> ToList()
     {
         var list = new List<T>();
         foreach (var node in this)
             list.Add(node);
         return list;
     }
-
-    /// <summary>
-    /// Method to enable foreach-loops
-    /// </summary>
-    IEnumerator IEnumerable.GetEnumerator()
+	//---------------------------------------------------------------------
+	// Method to enable foreach-loops
+	//---------------------------------------------------------------------
+	IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();
     }
@@ -290,23 +297,30 @@ public class KdTree<T> : IEnumerable<T>, IEnumerable where T : Component
         }
         return parent;
     }
-
-    /// <summary>
-    /// Find closest object to given position
-    /// </summary>
-    /// <param name="position">position</param>
-    /// <returns>closest object</returns>
-    public T FindClosest(Vector3 position)
+	//---------------------------------------------------------------------
+	// Find closest object to given position
+	//
+	// Param:
+	//		position: The position of the object
+	//
+	// Returns:
+	//		  returns the closest object
+	//---------------------------------------------------------------------
+	public T FindClosest(Vector3 position)
     {
         return _findClosest(position);
     }
 
-    /// <summary>
-    /// Find close objects to given position
-    /// </summary>
-    /// <param name="position">position</param>
-    /// <returns>close object</returns>
-    public IEnumerable<T> FindClose(Vector3 position)
+	//---------------------------------------------------------------------
+	// Find closest object to given position
+	//
+	// Param:
+	//		position: The position of the object
+	//
+	// Returns:
+	//		  returns the closest object
+	//---------------------------------------------------------------------
+	public IEnumerable<T> FindClose(Vector3 position)
     {
         var output = new List<T>();
         _findClosest(position, output);
